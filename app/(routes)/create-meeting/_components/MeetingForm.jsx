@@ -1,4 +1,5 @@
-"use client";
+"use client"
+import React, { useEffect } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,97 +13,81 @@ import {
 } from "@/components/ui/dropdown-menu";
 import LocationOption from "@/app/_utils/LocationOption";
 import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
-import { doc, getFirestore, setDoc } from "firebase/firestore";
-import { app } from "@/Config/FirbaseConfig";
+import {doc, getFirestore, setDoc } from "firebase/firestore";
+import { app } from '../../../../Config/FirbaseConfig'
+import { toast } from 'sonner'
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { toast } from "sonner";
-import React, { useEffect, useState } from "react";
-import ThemeOption from "@/app/_utils/ThemeOption";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'
 
-function MeetingForm({ setFormValue }) {
-  const [location, setLocation] = useState();
-  const [themeColor, setThemeColor] = useState("");
-  const [eventName, setEventName] = useState();
-  const [duration, setDuration] = useState(30);
-  const [locationType, setLocationType] = useState();
-  const [locationUrl, setLocationUrl] = useState();
-  const { user } = useKindeBrowserClient();
-  const db = getFirestore(app);
-  const router = useRouter();
-  useEffect(() => {
+function MeetingForm({setFormValue}) {
+const [location, setLocation] = useState();
+const [eventName, setEventName] = useState();
+const [duration, setDuration] = useState("choose");
+const [locationType, setLocationType] = useState();
+const [meetingURL, setmeetingURL] = useState();
+const {user}=useKindeBrowserClient();
+const db=getFirestore(app);
+const router=useRouter();
+useEffect(() => {
+  
     setFormValue({
-      eventName: eventName,
-      duration: duration,
-      locationType: locationType,
-      locationUrl: locationUrl,
-      themeColor: themeColor,
-    });
-  }, [eventName, duration, locationType, locationUrl, themeColor]);
+      eventName:eventName,
+      duration:duration,
+      locationType:locationType,
+      meetingURL:meetingURL,
+    })
+  
+}, [eventName,duration,locationType,meetingURL,])
 
-  /**
-   * On Create CLick Handler
-   */
-  const onCreateClick = async () => {
-    const id = Date.now().toString();
-    await setDoc(doc(db, "MeetingEvent", id), {
-      id: id,
-      eventName: eventName,
-      duration: duration,
-      locationType: locationType,
-      locationUrl: locationUrl,
-      themeColor: themeColor,
-      businessId: doc(db, "Business", user?.email),
-      createdBy: user?.email,
-    });
-    toast("New Meeting Event Created!");
-    router.replace("/dashboard/meeting-type");
-  };
-
+const onCreateClick=async()=>{
+  const id=Date.now().toString();
+  await setDoc(doc(db,'MeetingEvent',id),{
+      id:id,
+      eventName:eventName,
+      duration:duration,
+      locationType:locationType,
+      meetingURL:meetingURL,
+      // businessId:'Business/'+user?.email
+      businessId:doc(db,'Business',user?.email),
+      createdBy:user?.email
+    })
+    toast('New Meeting Event Created!');
+    router.replace('/dashboard/meetingtype')
+}
   return (
-    <div className="p-8 ">
-      <Link href={"/dashboard"}>
-        <h2 className="flex gap-2">
-          {" "}
-          <ChevronLeft /> cancel
-        </h2>
-      </Link>
-
+    <div className="p-8">
+    <Link href={'/dashboard'}>  <h2 className="flex gap-2">
+        <ChevronLeft /> Cancel
+      </h2></Link>
+    
       <div className="mt-4">
-        <h2 className="font-bold text-2xl my-4">Create new Event</h2>
+        <h2 className="font-bold text-2xl y-4">Create New Event</h2>
         <hr></hr>
       </div>
       <div className="flex flex-col gap-3 my-4">
-        <h2 className="font-bold">Event Name*</h2>
-        <Input
-          placeholder="Name of your meeting event"
-          onChange={(event) => setEventName(event.target.value)}
-        />
-        <h2 className="font-bold">Duration *</h2>
+        <h2 className="font-bold">Event name *</h2>
+        <Input placeholder="Name of your meeting event  "
+        onChange={(event)=>setEventName(event.target.value)} />
+
+        <h2 className="font-bold">Duration*</h2>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="max-w-40">
-              {duration} Min
+              {duration} min
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setDuration(15)}>
-              15 Min
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setDuration(30)}>
-              30 Min
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setDuration(45)}>
-              45 Min
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setDuration(60)}>
-              60 Min
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={()=>setDuration(15)}>15 min</DropdownMenuItem>
+            <DropdownMenuItem onClick={()=>setDuration(30)}>30 min</DropdownMenuItem>
+            <DropdownMenuItem onClick={()=>setDuration(45)}>45 min</DropdownMenuItem>
+            <DropdownMenuItem onClick={()=>setDuration(60)}>60 min</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <h2 className="font-bold">Location *</h2>
+        <h2 className="font-bold">Location*</h2>
         <div className="grid grid-cols-4 gap-3">
           {LocationOption.map((option, index) => (
             <div
@@ -111,10 +96,7 @@ function MeetingForm({ setFormValue }) {
                      justify-center items-center 
                      p-3 rounded-lg cursor-pointer
                      hover:bg-blue-100 hover:border-primary
-                     ${
-                       locationType == option.name &&
-                       "bg-blue-100 border-primary"
-                     }`}
+                     ${location==option.name&& 'bg-blue-100 border-primary' } ` }
               onClick={() => setLocationType(option.name)}
             >
               <Image
@@ -124,39 +106,31 @@ function MeetingForm({ setFormValue }) {
                 alt={option.name}
               />
               <h2>{option.name}</h2>
+              <hr></hr>
             </div>
           ))}
         </div>
-        {locationType && (
-          <>
-            <h2 className="font-bold">Add {location} Url *</h2>
-            <Input
-              placeholder="Add Url"
-              onChange={(event) => setLocationUrl(event.target.value)}
-            />
-          </>
-        )}
-        <h2 className="font-bold">Select Theme Color</h2>
+        {locationType&&<><h2 className="font-bold">Add {locationType} Url*  </h2>
+        <Input placeholder='Add url'
+        onChange={(event)=>setmeetingURL(event.target.value)} /></>}
+        {/* <h2 className="font-bold">Select the theme color</h2>
         <div className="flex justify-evenly">
-          {ThemeOption.map((color, index) => (
-            <div
-              key={index}
-              className={`h-7 w-7 rounded-full
-                    ${themeColor == color && " border-4 border-black"}`}
-              style={{ backgroundColor: color }}
-              onClick={() => setThemeColor(color)}
-            ></div>
-          ))}
-        </div>
-      </div>
+          {ThemeOption.map((color,index)=>{
+            <div key={color} className="h-5 w-5 rounded-full"
+            style={{backgroundColor:color}}>
 
-      <Button
-        className="w-full mt-9"
-        disabled={!eventName || !duration || !locationType || !locationUrl}
-        onClick={() => onCreateClick()}
-      >
-        Create
-      </Button>
+            </div>
+
+          })}
+        </div> */}
+        
+      </div>
+      <div>
+        <Button className="w-full mt-9"
+        disabled={(!eventName||!duration||!locationType||!meetingURL )}
+        onClick={()=>onCreateClick()}
+        > Create</Button>
+      </div>
     </div>
   );
 }

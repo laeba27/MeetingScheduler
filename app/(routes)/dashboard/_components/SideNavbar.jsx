@@ -55,9 +55,8 @@ function SideNavbar() {
       </div>
       <div className="mt-5 flex flex-col gap-5">
         {menu.map((item, index) => (
-          <Link href={item.path}>
+          <Link key={index} href={item.path}>
             <Button
-              key={index}
               variant="ghost"
               className={`w-full flex gap-2 
                         justify-start
