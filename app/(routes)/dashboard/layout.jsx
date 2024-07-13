@@ -13,7 +13,7 @@ function DashboardLayout({children}) {
             enableSystem
             disableTransitionOnChange
           >
-    <div className='hidden md:block md:w-64 bg-slate-50 h-screen fixed'>
+    <div className='hidden md:block md:w-64 border-r border-r-slate-100 h-screen fixed'>
         <SideNavbar/>
     </div>
     <div className='md:ml-64'>
