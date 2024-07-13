@@ -2,11 +2,17 @@ import React from 'react'
 import SideNavbar from './_components/SideNavbar'
 import DashboardHeader from './_components/DashboardHeader'
 import { Toaster } from '@/components/ui/sonner'
-
+import { ThemeProvider } from "../../_utils/theme-provider"
 function DashboardLayout({children}) {
 
   return (
     <div>
+    <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
     <div className='hidden md:block md:w-64 bg-slate-50 h-screen fixed'>
         <SideNavbar/>
     </div>
@@ -15,6 +21,7 @@ function DashboardLayout({children}) {
         <Toaster/>
     {children}
     </div>
+    </ThemeProvider>
 </div>
 )
 }

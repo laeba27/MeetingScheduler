@@ -21,10 +21,10 @@ import { toast } from 'sonner'
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useRouter } from 'next/navigation'
 
-function MeetingForm({setFormValue}) {
+function MeetingForm({setFormValue , meetingDate, selectedTime }) {
 const [location, setLocation] = useState();
 const [eventName, setEventName] = useState();
-const [duration, setDuration] = useState("choose");
+const [duration, setDuration] = useState("Choose");
 const [locationType, setLocationType] = useState();
 const [meetingURL, setmeetingURL] = useState();
 const {user}=useKindeBrowserClient();
@@ -37,9 +37,11 @@ useEffect(() => {
       duration:duration,
       locationType:locationType,
       meetingURL:meetingURL,
+      meetingDate:meetingDate , // Include meeting date
+      selectedTime:selectedTime,
     })
   
-}, [eventName,duration,locationType,meetingURL,])
+}, [eventName,duration,locationType,meetingURL, meetingDate, selectedTime ])
 
 const onCreateClick=async()=>{
   const id=Date.now().toString();
@@ -49,6 +51,8 @@ const onCreateClick=async()=>{
       duration:duration,
       locationType:locationType,
       meetingURL:meetingURL,
+      meetingDate:meetingDate , // Include meeting date
+      selectedTime:selectedTime,
       // businessId:'Business/'+user?.email
       businessId:doc(db,'Business',user?.email),
       createdBy:user?.email
@@ -68,11 +72,11 @@ const onCreateClick=async()=>{
       </div>
       <div className="flex flex-col gap-3 my-4">
         <h2 className="font-bold">Event name *</h2>
-        <Input placeholder="Name of your meeting event  "
+        <Input className="capitalize" placeholder="Name of your meeting event  "
         onChange={(event)=>setEventName(event.target.value)} />
 
         <h2 className="font-bold">Duration*</h2>
-
+        <div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="max-w-40">
@@ -86,6 +90,10 @@ const onCreateClick=async()=>{
             <DropdownMenuItem onClick={()=>setDuration(60)}>60 min</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
+        <div>
+          
+        </div>
 
         <h2 className="font-bold">Location*</h2>
         <div className="grid grid-cols-4 gap-3">

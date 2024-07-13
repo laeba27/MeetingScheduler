@@ -1,6 +1,7 @@
 "use client";
 import { app } from "@/Config/FirbaseConfig";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import {
   getFirestore,
@@ -12,7 +13,16 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
-import { Clock, Copy, MapPin, Pen, Settings, Trash } from "lucide-react";
+import {
+  CalendarCheck,
+  Clock,
+  Copy,
+  Hourglass,
+  MapPin,
+  Pen,
+  Settings,
+  Trash,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -49,12 +59,12 @@ function MeetingEventList() {
       setEventList((prevEvent) => [...prevEvent, doc.data()]);
     });
   };
-  const onDeleteMeetingEvent=async(event)=>{
-    await deleteDoc(doc(db, "MeetingEvent", event?.id)).then(resp=>{
-      toast('Meeting Event Deleted!');
+  const onDeleteMeetingEvent = async (event) => {
+    await deleteDoc(doc(db, "MeetingEvent", event?.id)).then((resp) => {
+      toast("Meeting Event Deleted!");
       getEventList();
-    })
-  }
+    });
+  };
   return (
     <div
       className="mt-10 grid grid-cols-1 md:grid-cols-2 
@@ -78,7 +88,10 @@ function MeetingEventList() {
                     <Pen className="h-4 w-4" />
                     Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem  onClick={()=>onDeleteMeetingEvent(event)} className="flex gap-4 hover:font-bold">
+                  <DropdownMenuItem
+                    onClick={() => onDeleteMeetingEvent(event)}
+                    className="flex gap-4 hover:font-bold"
+                  >
                     {" "}
                     <Trash className="h-4 w-4" />
                     Delete
@@ -96,6 +109,22 @@ function MeetingEventList() {
                 <MapPin /> {event.locationType} Meeting{" "}
               </h2>
             </div>
+            <div className="flex justify-between">
+            {event?.selectedTime && (
+              <h2 className="flex gap-2 text-sm  text-gray-800">
+              <Hourglass /> {event?.selectedTime}{" "}
+            </h2>
+            )}
+            
+            {event?.meetingDate && (
+              <h2 className="flex gap-2 text-sm text-gray-800">
+                <CalendarCheck />{" "}
+                {format(event.meetingDate.toDate(), "MMMM d, yyyy ")}
+              </h2>
+            )}
+            </div>
+            
+
             <hr></hr>
             <div className="flex justify-between items-center">
               <h2
